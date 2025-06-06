@@ -78,23 +78,29 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/signin").permitAll() // Cho phép truy cập vào endpoint signin
-                        .requestMatchers("/api/auth/signup").permitAll() // Cho phép truy cập vào endpoint signup
-                        .requestMatchers("/api/auth/**").permitAll() // Cho phép truy cập vào các endpoint auth khác
-                        .requestMatchers("/api/test/**").permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/encode-password").permitAll() // Permit
+                                                                                                             // temporary
+                                                                                                             // encode
+                                                                                                             // endpoint
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/api/admin/**").permitAll()
+                        .requestMatchers("/api/books/**").permitAll()
+                        // .requestMatchers("/api/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/api/test/**").permitAll()
                         .requestMatchers("/images/**").permitAll()
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
+
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.headers(headers -> headers.frameOptions(
+                frameOptions -> frameOptions.sameOrigin()));
 
         return http.build();
     }

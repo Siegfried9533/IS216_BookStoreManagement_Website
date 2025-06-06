@@ -23,9 +23,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
@@ -52,14 +54,31 @@ public class AuthController {
     @Autowired
     private EmailServiceImpl emailService;
 
+    // Temporary endpoint to test password encoding
+    @GetMapping("/encode-password")
+    public String encodePassword(@RequestParam("password") String password) {
+        System.out.println("Encoding password: " + password);
+        String encodedPassword = encoder.encode(password);
+        System.out.println("Encoded result: " + encodedPassword);
+        return encodedPassword;
+    }
+
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
+        System.out.println("Received signin request:");
+        System.out.println("  Username: " + loginRequest.getUsername());
+        // Avoid logging the raw password directly for security
+        // System.out.println(" Password: " + loginRequest.getPassword());
+
         Authentication authentication;
         try {
+            System.out.println("Attempting to authenticate user...");
             authentication = authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
                             loginRequest.getPassword()));
+            System.out.println("Authentication successful.");
         } catch (AuthenticationException exception) {
+            System.out.println("Authentication failed: " + exception.getMessage());
             Map<String, Object> map = new HashMap<>();
             map.put("message", "Bad credentials");
             map.put("status", false);
@@ -145,7 +164,12 @@ public class AuthController {
                 user.setResetPasswordExpiry(calendar.getTime());
                 userRepository.save(user);
 
-                emailService.sendPasswordResetEmail(user.getEmail(), token);
+                try {
+                    emailService.sendPasswordResetEmail(user.getEmail(), token);
+                } catch (EmailServiceImpl.EmailSendingException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Failed to send password reset email");
+                }
             }
         } catch (EmailServiceImpl.EmailSendingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -183,5 +207,11 @@ public class AuthController {
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("Password has been reset successfully"));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout() {
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok(new MessageResponse("Logged out successfully"));
     }
 }
