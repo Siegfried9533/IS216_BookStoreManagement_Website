@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@types/axios": "^0.14.0",
-    "axios": "^1.6.7"
+    "axios": "^1.6.7",
+    "react-countdown": "^2.3.6"
   }
 }

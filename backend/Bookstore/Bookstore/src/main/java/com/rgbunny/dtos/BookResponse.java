@@ -1,12 +1,15 @@
 package com.rgbunny.dtos;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookResponse {
@@ -22,6 +25,10 @@ public class BookResponse {
     private Integer readingAge;
     private Integer pages;
     private String dimension;
-    private Integer quantity = 0;
-    private Double discount = 0.0;
+    private Integer quantity;
+    private Double discount;
+    private String imageUrl;
+    private Double rating;
+    private Integer soldQuantity;
+    private LocalDateTime createdAt;
 }

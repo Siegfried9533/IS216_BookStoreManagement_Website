@@ -1,0 +1,125 @@
+---Tự sinh mã 
+CREATE OR REPLACE TRIGGER trg_autogen_mand
+BEFORE INSERT ON NGUOIDUNG
+FOR EACH ROW
+WHEN (NEW.MAND IS NULL)
+DECLARE
+    v_max_num NUMBER;
+BEGIN
+    SELECT NVL(MAX(TO_NUMBER(REGEXP_SUBSTR(MAND, '\d+$'))), 0)
+    INTO v_max_num
+    FROM NGUOIDUNG;
+
+    :NEW.MAND := 'MAND' || LPAD(v_max_num + 1, 4, '0');
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_autogen_maddh
+BEFORE INSERT ON DONDATHANG
+FOR EACH ROW
+WHEN (NEW.MADDH IS NULL)
+DECLARE
+    v_max_num NUMBER;
+BEGIN
+    SELECT NVL(MAX(TO_NUMBER(REGEXP_SUBSTR(MADDH, '\d+$'))), 0)
+    INTO v_max_num
+    FROM DONDATHANG;
+
+    :NEW.MADDH := 'MADDH' || LPAD(v_max_num + 1, 4, '0');
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_autogen_magh
+BEFORE INSERT ON GIOHANG
+FOR EACH ROW
+WHEN (NEW.MAGH IS NULL)
+DECLARE
+    v_max_num NUMBER;
+BEGIN
+    SELECT NVL(MAX(TO_NUMBER(REGEXP_SUBSTR(MAGH, '\d+$'))), 0)
+    INTO v_max_num
+    FROM GIOHANG;
+
+    :NEW.MAGH := 'MAGH' || LPAD(v_max_num + 1, 4, '0');
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_autogen_mahd
+BEFORE INSERT ON HOADON
+FOR EACH ROW
+WHEN (NEW.MAHD IS NULL)
+DECLARE
+    v_max_num NUMBER;
+BEGIN
+    SELECT NVL(MAX(TO_NUMBER(REGEXP_SUBSTR(MAHD, '\d+$'))), 0)
+    INTO v_max_num
+    FROM HOADON;
+
+    :NEW.MAHD := 'MAHD' || LPAD(v_max_num + 1, 4, '0');
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_autogen_mactgh
+BEFORE INSERT ON CHITIETGIOHANG
+FOR EACH ROW
+WHEN (NEW.MACTGH IS NULL)
+DECLARE
+    v_max_num NUMBER;
+BEGIN
+    SELECT NVL(MAX(TO_NUMBER(REGEXP_SUBSTR(MACTGH, '\d+$'))), 0)
+    INTO v_max_num
+    FROM CHITIETGIOHANG;
+
+    :NEW.MACTGH := 'MACTGH' || LPAD(v_max_num + 1, 4, '0');
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_autogen_mactddh
+BEFORE INSERT ON CHITIETDDH
+FOR EACH ROW
+WHEN (NEW.MACTDDH IS NULL)
+DECLARE
+    v_max_num NUMBER;
+BEGIN
+    SELECT NVL(MAX(TO_NUMBER(REGEXP_SUBSTR(MACTDDH, '\d+$'))), 0)
+    INTO v_max_num
+    FROM CHITIETDDH;
+
+    :NEW.MACTDDH := 'MACTDDH' || LPAD(v_max_num + 1, 4, '0');
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_autogen_macthd
+BEFORE INSERT ON CHITIETHD
+FOR EACH ROW
+WHEN (NEW.MACTHD IS NULL)
+DECLARE
+    v_max_num NUMBER;
+BEGIN
+    SELECT NVL(MAX(TO_NUMBER(REGEXP_SUBSTR(MACTHD, '\d+$'))), 0)
+    INTO v_max_num
+    FROM CHITIETHD;
+
+    :NEW.MACTHD := 'MACTHD' || LPAD(v_max_num + 1, 4, '0');
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_autogen_masach
+BEFORE INSERT ON SACH
+FOR EACH ROW
+WHEN (NEW.MASACH IS NULL)
+DECLARE
+    v_max_num NUMBER;
+BEGIN
+    -- Lấy số thứ tự lớn nhất trong MASACH hiện có (lấy phần số sau chữ S)
+    SELECT NVL(MAX(TO_NUMBER(SUBSTR(MASACH, 2))), 0)
+    INTO v_max_num
+    FROM SACH;
+
+    -- Gán MASACH mới với tiền tố 'S' và số thứ tự tăng dần, 4 chữ số
+    :NEW.MASACH := 'S' || LPAD(v_max_num + 1, 4, '0');
+END;
+/
+
+
+

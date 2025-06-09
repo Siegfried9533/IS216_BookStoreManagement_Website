@@ -10,6 +10,12 @@ import java.util.Map;
 public interface BookService {
     List<BookResponse> getAllBooks();
 
+    List<BookResponse> getFeaturedBooks();
+
+    List<BookResponse> getNewArrivals();
+
+    List<BookResponse> getBestSellers();
+
     BookResponse getBookById(Long id);
 
     BookResponse createBook(Book book);

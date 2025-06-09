@@ -33,34 +33,60 @@ public class JwtUtils {
     }
 
     public String generateTokenFromUsername(UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(key())
-                .compact();
+        try {
+            logger.debug("Generating JWT token for user: {}", userDetails.getUsername());
+            String token = Jwts.builder()
+                    .setSubject(userDetails.getUsername())
+                    .setIssuedAt(new Date())
+                    .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                    .signWith(key(), SignatureAlgorithm.HS256)
+                    .compact();
+            logger.debug("JWT token generated successfully");
+            return token;
+        } catch (Exception e) {
+            logger.error("Error generating JWT token: {}", e.getMessage());
+            throw new RuntimeException("Error generating JWT token", e);
+        }
     }
 
     public String getUserNameFromJwtToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key())
-                .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+        try {
+            logger.debug("Extracting username from JWT token");
+            String username = Jwts.parserBuilder()
+                    .setSigningKey(key())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+            logger.debug("Username extracted successfully: {}", username);
+            return username;
+        } catch (Exception e) {
+            logger.error("Error extracting username from JWT token: {}", e.getMessage());
+            throw new RuntimeException("Error extracting username from JWT token", e);
+        }
     }
 
     private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtSecret));
+        try {
+            logger.debug("Decoding JWT secret key");
+            byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+            Key key = Keys.hmacShaKeyFor(keyBytes);
+            logger.debug("JWT secret key decoded successfully");
+            return key;
+        } catch (Exception e) {
+            logger.error("Error decoding JWT secret key: {}", e.getMessage());
+            throw new RuntimeException("Error decoding JWT secret key", e);
+        }
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
+            logger.debug("Validating JWT token");
             Jwts.parserBuilder()
                     .setSigningKey(key())
                     .build()
                     .parseClaimsJws(authToken);
+            logger.debug("JWT token is valid");
             return true;
         } catch (MalformedJwtException e) {
             logger.error("Invalid JWT token: {}", e.getMessage());
@@ -70,6 +96,8 @@ public class JwtUtils {
             logger.error("JWT token is unsupported: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
             logger.error("JWT claims string is empty: {}", e.getMessage());
+        } catch (Exception e) {
+            logger.error("Unexpected error validating JWT token: {}", e.getMessage());
         }
         return false;
     }

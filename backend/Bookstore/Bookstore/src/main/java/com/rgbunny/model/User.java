@@ -10,8 +10,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "App_User", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "user_name"),
-        @UniqueConstraint(columnNames = "email")
+        @UniqueConstraint(columnNames = "user_name")
 })
 @Data
 @NoArgsConstructor
@@ -25,7 +24,7 @@ public class User {
 
     @NotBlank
     @Size(min = 2, max = 20, message = "Tên người dùng phải lớn hơn 2 và nhỏ hơn 20 ký tự!")
-    @Column(name = "user_name")
+    @Column(name = "user_name", unique = true)
     private String userName;
 
     @NotBlank

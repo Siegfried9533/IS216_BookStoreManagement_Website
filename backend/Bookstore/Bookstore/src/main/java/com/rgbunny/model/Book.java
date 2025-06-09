@@ -6,6 +6,7 @@ import lombok.Data;
 import org.modelmapper.internal.bytebuddy.implementation.bind.annotation.Default;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -72,8 +73,23 @@ public class Book {
     @Column(name = "dimension")
     private String dimension;
 
+    @Column(name = "quantity")
     private Integer quantity = 0;
+
+    @Column(name = "discount")
     private Double discount = 0.0;
+
+    @Column(name = "imageUrl")
+    private String imageUrl;
+
+    @Column(name = "rating")
+    private Double rating = 0.0;
+
+    @Column(name = "soldQuantity")
+    private Integer soldQuantity = 0;
+
+    @Column(name = "createdAt", insertable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "book", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
     private List<CartItem> books = new ArrayList<>();

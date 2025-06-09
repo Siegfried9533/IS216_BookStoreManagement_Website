@@ -13,7 +13,10 @@ import com.rgbunny.security.response.LoginResponse;
 import com.rgbunny.security.response.MessageResponse;
 import com.rgbunny.security.services.UserDetailsImpl;
 import com.rgbunny.security.services.EmailServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +39,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
     @Autowired
     private JwtUtils jwtUtils;
 
@@ -64,87 +69,140 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
-        System.out.println("Received signin request:");
-        System.out.println("  Username: " + loginRequest.getUsername());
-        // Avoid logging the raw password directly for security
-        // System.out.println(" Password: " + loginRequest.getPassword());
-
-        Authentication authentication;
+    public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         try {
-            System.out.println("Attempting to authenticate user...");
-            authentication = authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
-                            loginRequest.getPassword()));
-            System.out.println("Authentication successful.");
-        } catch (AuthenticationException exception) {
-            System.out.println("Authentication failed: " + exception.getMessage());
-            Map<String, Object> map = new HashMap<>();
-            map.put("message", "Bad credentials");
-            map.put("status", false);
-            return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
+            System.out.println("=== START LOGIN REQUEST ===");
+            System.out.println("Username: " + loginRequest.getUsername());
+            System.out.println("Request URI: " + request.getRequestURI());
+            System.out.println("Request Method: " + request.getMethod());
+            System.out.println("Content Type: " + request.getContentType());
+
+            logger.info("Received signin request for username: {}", loginRequest.getUsername());
+            logger.debug("Request headers: {}", Collections.list(request.getHeaderNames()));
+            logger.debug("Request body: username={}", loginRequest.getUsername());
+
+            // Check if user exists
+            Optional<User> userOptional = userRepository.findByUserName(loginRequest.getUsername());
+            if (userOptional.isEmpty()) {
+                System.out.println("User not found: " + loginRequest.getUsername());
+                logger.warn("User not found: {}", loginRequest.getUsername());
+                Map<String, Object> map = new HashMap<>();
+                map.put("message", "User not found");
+                map.put("status", false);
+                return new ResponseEntity<Object>(map, HttpStatus.NOT_FOUND);
+            }
+
+            Authentication authentication;
+            try {
+                System.out.println("Attempting to authenticate user...");
+                logger.info("Attempting to authenticate user...");
+                authentication = authenticationManager
+                        .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(),
+                                loginRequest.getPassword()));
+                System.out.println("Authentication successful");
+                logger.info("Authentication successful.");
+            } catch (AuthenticationException exception) {
+                System.out.println("Authentication failed: " + exception.getMessage());
+                logger.error("Authentication failed: {}", exception.getMessage());
+                Map<String, Object> map = new HashMap<>();
+                map.put("message", "Bad credentials");
+                map.put("status", false);
+                return new ResponseEntity<Object>(map, HttpStatus.UNAUTHORIZED);
+            }
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            System.out.println("User authenticated successfully. User ID: " + userDetails.getId());
+            logger.info("User authenticated successfully. User ID: {}", userDetails.getId());
+
+            String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
+            System.out.println("JWT token generated successfully");
+            logger.info("JWT token generated successfully");
+
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(item -> item.getAuthority())
+                    .collect(Collectors.toList());
+            System.out.println("User roles: " + roles);
+            logger.info("User roles: {}", roles);
+
+            LoginResponse response = new LoginResponse(userDetails.getId(), userDetails.getUsername(), roles, jwtToken);
+            System.out.println("Login response prepared successfully");
+            logger.info("Login response prepared successfully");
+            System.out.println("=== END LOGIN REQUEST ===");
+
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.out.println("=== ERROR IN LOGIN REQUEST ===");
+            System.out.println("Error message: " + e.getMessage());
+            e.printStackTrace();
+            System.out.println("=== END ERROR LOG ===");
+
+            logger.error("Unexpected error during authentication: ", e);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Internal server error: " + e.getMessage());
+            errorResponse.put("status", false);
+            return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-
-        String jwtToken = jwtUtils.generateTokenFromUsername(userDetails);
-
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
-                .collect(Collectors.toList());
-
-        LoginResponse response = new LoginResponse(userDetails.getId(), userDetails.getUsername(), roles, jwtToken);
-
-        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
-        if (userRepository.existsByUserName(signupRequest.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken"));
-        }
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already taken"));
-        }
-        User user = new User(
-                signupRequest.getUsername(),
-                signupRequest.getEmail(),
-                encoder.encode(signupRequest.getPassword()));
-        Set<String> strRoles = signupRequest.getRole();
-        Set<Role> roles = new HashSet<>();
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found!"));
-                        ;
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+        logger.info("Received signup request for username: {}", signUpRequest.getUsername());
 
-                        roles.add(adminRole);
+        try {
+            if (userRepository.existsByUserName(signUpRequest.getUsername())) {
+                logger.warn("Username is already taken: {}", signUpRequest.getUsername());
+                return ResponseEntity
+                        .badRequest()
+                        .body(new MessageResponse("Error: Username is already taken!"));
+            }
 
-                        break;
-                    case "employee":
-                        Role employeeRole = roleRepository.findByRoleName(AppRole.ROLE_EMPLOYEE)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(employeeRole);
+            // Create new user's account
+            User user = new User(
+                    signUpRequest.getUsername(),
+                    signUpRequest.getEmail(),
+                    encoder.encode(signUpRequest.getPassword()));
 
-                        break;
-                    default:
-                        Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
-                }
-            });
+            Set<String> strRoles = signUpRequest.getRole();
+            Set<Role> roles = new HashSet<>();
+
+            if (strRoles == null) {
+                Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
+                        .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                roles.add(userRole);
+            } else {
+                strRoles.forEach(role -> {
+                    switch (role) {
+                        case "admin":
+                            Role adminRole = roleRepository.findByRoleName(AppRole.ROLE_ADMIN)
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(adminRole);
+                            break;
+                        case "employee":
+                            Role employeeRole = roleRepository.findByRoleName(AppRole.ROLE_EMPLOYEE)
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(employeeRole);
+                            break;
+                        default:
+                            Role userRole = roleRepository.findByRoleName(AppRole.ROLE_USER)
+                                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                            roles.add(userRole);
+                    }
+                });
+            }
+
+            user.setRoles(roles);
+            userRepository.save(user);
+            logger.info("User registered successfully: {}", user.getUserName());
+
+            return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        } catch (Exception e) {
+            logger.error("Error during user registration: {}", e.getMessage(), e);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageResponse("Error: An unexpected error occurred during registration."));
         }
-        user.setRoles(roles);
-        userRepository.save(user);
-        return ResponseEntity.ok(new MessageResponse("User register successfully"));
     }
 
     @PostMapping("/forgot-password")

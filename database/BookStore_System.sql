@@ -116,6 +116,79 @@ ALTER TABLE HOADON ADD CONSTRAINT FK_HOADON_DONDATHANG FOREIGN KEY (MADDH) REFER
 ALTER TABLE CHITIETHD ADD CONSTRAINT FK_CHITIETHD_HOADON FOREIGN KEY (MAHD) REFERENCES HOADON(MAHD);
 ALTER TABLE CHITIETHD ADD CONSTRAINT FK_CHITIETHD_SACH FOREIGN KEY (MASACH) REFERENCES SACH(MASACH);
 
+--insert BOOK
+SET DEFINE OFF;
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('The Great Gatsby', 'F. Scott Fitzgerald', 'Scribner', TO_DATE('1925-04-10', 'YYYY-MM-DD'), 'English', 16, 218, '5.5 x 8.5 inches', 15.99, 'Fiction', 12, 'A novel about the American dream and the roaring twenties.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('To Kill a Mockingbird', 'Harper Lee', 'J.B. Lippincott & Co.', TO_DATE('1960-07-11', 'YYYY-MM-DD'), 'English', 14, 281, '5.5 x 8.2 inches', 14.99, 'Classic', 10, 'A story of racial injustice and moral growth in the American South.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('1984', 'George Orwell', 'Secker & Warburg', TO_DATE('1949-06-08', 'YYYY-MM-DD'), 'English', 16, 328, '5.0 x 7.8 inches', 13.49, 'Dystopian', 15, 'A chilling portrayal of a totalitarian future society.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('Pride and Prejudice', 'Jane Austen', 'T. Egerton', TO_DATE('1813-01-28', 'YYYY-MM-DD'), 'English', 12, 279, '5.2 x 8.0 inches', 11.99, 'Romance', 8, 'A witty exploration of manners and matrimonial machinations.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('The Hobbit', 'J.R.R. Tolkien', 'George Allen & Unwin', TO_DATE('1937-09-21', 'YYYY-MM-DD'), 'English', 10, 310, '5.1 x 7.9 inches', 12.99, 'Fantasy', 20, 'A prelude to the epic tale of The Lord of the Rings.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('Harry Potter and the Sorcerer''s Stone', 'J.K. Rowling', 'Bloomsbury', TO_DATE('1997-06-26', 'YYYY-MM-DD'), 'English', 9, 309, '5.3 x 8.6 inches', 16.99, 'Fantasy', 25, 'The beginning of a magical adventure at Hogwarts.', 10);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('The Catcher in the Rye', 'J.D. Salinger', 'Little, Brown and Company', TO_DATE('1951-07-16', 'YYYY-MM-DD'), 'English', 14, 277, '5.4 x 8.4 inches', 13.99, 'Classic', 18, 'A tale of teenage angst and rebellion.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('Brave New World', 'Aldous Huxley', 'Chatto & Windus', TO_DATE('1932-08-30', 'YYYY-MM-DD'), 'English', 16, 311, '5.0 x 7.7 inches', 14.49, 'Science Fiction', 14, 'A futuristic vision of a controlled and dehumanized society.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('The Alchemist', 'Paulo Coelho', 'HarperOne', TO_DATE('1988-05-01', 'YYYY-MM-DD'), 'English', 12, 208, '5.0 x 8.0 inches', 10.99, 'Philosophy', 22, 'A journey of self-discovery and following your dreams.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('The Book Thief', 'Markus Zusak', 'Picador', TO_DATE('2005-03-14', 'YYYY-MM-DD'), 'English', 13, 552, '5.7 x 8.6 inches', 12.49, 'Historical Fiction', 17, 'A story of a girl who finds solace in books during Nazi Germany.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('The Little Prince', 'Antoine de Saint-Exupéry', 'Reynal & Hitchcock', TO_DATE('1943-04-06', 'YYYY-MM-DD'), 'French', 10, 96, '4.9 x 7.4 inches', 9.99, 'Fable', 30, 'A philosophical tale about love and human nature.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('Moby-Dick', 'Herman Melville', 'Harper & Brothers', TO_DATE('1851-10-18', 'YYYY-MM-DD'), 'English', 16, 635, '6.0 x 9.0 inches', 17.99, 'Adventure', 6, 'The epic quest for the elusive white whale.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('Jane Eyre', 'Charlotte Brontë', 'Smith, Elder & Co.', TO_DATE('1847-10-16', 'YYYY-MM-DD'), 'English', 14, 500, '5.2 x 8.3 inches', 12.79, 'Gothic', 9, 'A classic novel of love and independence.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('The Chronicles of Narnia: The Lion, the Witch and the Wardrobe', 'C.S. Lewis', 'Geoffrey Bles', TO_DATE('1950-10-16', 'YYYY-MM-DD'), 'English', 9, 208, '5.3 x 8.6 inches', 11.49, 'Fantasy', 24, 'A magical world discovered through a wardrobe.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('Animal Farm', 'George Orwell', 'Secker & Warburg', TO_DATE('1945-08-17', 'YYYY-MM-DD'), 'English', 13, 112, '5.0 x 7.8 inches', 9.49, 'Political Satire', 19, 'A satirical allegory of Soviet totalitarianism.', NULL);
 
 
+SET DEFINE OFF;
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('A Man Called Ove', 'Fredrik Backman', 'Forum', TO_DATE('2012-08-27', 'YYYY-MM-DD'), 'English', 14, 337, '5.1 x 8.0 inches', 11.49, 'Fiction', 20, 'A grumpy but loveable man finds his life turned upside down by new neighbors.', NULL);
 
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('The Kite Runner', 'Khaled Hosseini', 'Riverhead Books', TO_DATE('2003-05-29', 'YYYY-MM-DD'), 'English', 15, 371, '5.4 x 8.2 inches', 10.89, 'Fiction', 18, 'A powerful story of friendship and redemption set in Afghanistan.', 0.1);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('Normal People', 'Sally Rooney', 'Faber & Faber', TO_DATE('2018-08-28', 'YYYY-MM-DD'), 'English', 16, 273, '5.0 x 7.8 inches', 9.75, 'Fiction', 15, 'A subtle and intimate novel exploring the complexities of relationships.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('Snow Crash', 'Neal Stephenson', 'Bantam Books', TO_DATE('1992-06-01', 'YYYY-MM-DD'), 'English', 17, 480, '5.5 x 8.2 inches', 12.49, 'Science Fiction', 14, 'A fast-paced cyberpunk novel blending Sumerian myth with virtual reality.', 0.2);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('Red Mars', 'Kim Stanley Robinson', 'Bantam Books', TO_DATE('1992-09-01', 'YYYY-MM-DD'), 'English', 16, 572, '6.0 x 9.0 inches', 13.95, 'Science Fiction', 12, 'An ambitious colonization of Mars leads to political and environmental upheaval.', NULL);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('The Left Hand of Darkness', 'Ursula K. Le Guin', 'Ace Books', TO_DATE('1969-03-01', 'YYYY-MM-DD'), 'English', 15, 304, '5.2 x 8.0 inches', 10.25, 'Science Fiction', 17, 'A human ambassador visits a planet where gender is fluid.', 0.1);
+
+INSERT INTO BOOK (TITLE, AUTHOR, PUBLISHER, PUBLICATION_DATE, LANGUAGE, READING_AGE, PAGES, DIMENSION, PRICE, CATEGORY, QUANTITY, DESCRIPTION, DISCOUNT) 
+VALUES ('Eragon', 'Christopher Paolini', 'Knopf Books for Young Readers', TO_DATE('2002-08-26', 'YYYY-MM-DD'), 'English', 12, 544, '6.1 x 9.2 inches', 10.99, 'Fantasy', 18, 'A young farm boy discovers a dragon egg and is swept into a world of magic and power.', NULL);
+commit;
+
+UPDATE USER_ROLE
+SET ROLE_ID = 1
+WHERE USER_ID = 37;
+COMMIT;
